@@ -9,6 +9,32 @@ const statusBox = $("#status");
 const show = (el) => el && el.classList.remove("is-hidden");
 const hide = (el) => el && el.classList.add("is-hidden");
 
+function renderCards(clients) {
+  grid.innerHTML = ""; // Limpiamos el contenedor
+
+  clients.forEach((client) => {
+    const column = document.createElement("div");
+    column.className = "column is-one-quarter";
+
+    column.innerHTML = `
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-128x128" style="margin:auto;">
+            <img src="${client.avatar}" alt="${client.name}">
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5">${client.name}</p>
+          <p class="subtitle is-6">${client.Job_title}</p>
+          <span class="tag is-info">${client.Country}</span>
+        </div>
+      </div>
+    `;
+
+    grid.appendChild(column);
+  });
+}
+
 // 2) 
 document.addEventListener("DOMContentLoaded", () => {
   hide(statusBox);
@@ -27,8 +53,10 @@ async function fetchAll() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
-    console.log("🟢 Datos recibidos:", data); // <- verificá esto
-    // Próximo paso: renderizar tarjetas con estos datos
+    console.log("🟢 Datos recibidos:", data); 
+
+   renderCards(data); 
+
     if (!Array.isArray(data) || data.length === 0) {
       statusBox.className = "notification is-warning";
       statusBox.textContent = "Sin resultados";
