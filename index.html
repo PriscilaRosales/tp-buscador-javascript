@@ -39,6 +39,49 @@
   <div class="container">
     <h1 class="title">Gestion de Clientes</h1>
 
+  <!-- Barra de filtros -->
+<div class="box mt-4">
+  <div class="field is-grouped is-grouped-multiline">
+    <!-- Buscar por nombre -->
+    <div class="control">
+      <input
+        id="search-name"
+        class="input"
+        type="text"
+        placeholder="Buscar por nombre"
+      />
+    </div>
+
+    <!-- Filtro por País -->
+    <div class="control">
+      <div class="select">
+        <select id="filter-country">
+          <option value="">Todos los países</option>
+          <!-- Opciones dinámicas desde JS -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Filtro por Puesto (Job title) -->
+    <div class="control">
+      <div class="select">
+        <select id="filter-job">
+          <option value="">Todos los puestos</option>
+          <!-- Opciones dinámicas desde JS -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Botón Limpiar -->
+    <div class="control">
+      <button id="btn-clear" class="button is-light">
+        <span class="icon"><i class="fas fa-eraser"></i></span>
+        <span>Limpiar filtros</span>
+      </button>
+    </div>
+  </div>
+</div>  
+
     <div id="status" class="notification is-hidden"></div>
 
     <div id="loader" class="has-text-centered is-hidden">
