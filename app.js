@@ -78,10 +78,68 @@ function fillFilterOptions(clients) {
 }
 
 
+function applyFilters() {
+  const q = (document.querySelector('#search-name')?.value || '').trim().toLowerCase();
+  const country = document.querySelector('#filter-country')?.value || '';
+  const job = document.querySelector('#filter-job')?.value || '';
+
+  let filtered = allClients;
+
+  if (q) {
+    filtered = filtered.filter(c => (c.name || '').toLowerCase().includes(q));
+  }
+  if (country) {
+    filtered = filtered.filter(c => c.Country === country);
+  }
+  if (job) {
+    filtered = filtered.filter(c => c.Job_title === job);
+  }
+
+  if (filtered.length === 0) {
+    statusBox.className = "notification is-warning";
+    statusBox.textContent = "No se encontraron resultados con esos filtros.";
+    show(statusBox);
+  } else {
+    hide(statusBox);
+  }
+
+  renderCards(filtered);
+}
+
+// barra de filtros y el navbar burger
+function setupFilterEvents() {
+  const inputName = document.querySelector('#search-name');
+  const selCountry = document.querySelector('#filter-country');
+  const selJob = document.querySelector('#filter-job');
+  const btnClear = document.querySelector('#btn-clear');
+
+  inputName?.addEventListener('input', applyFilters);
+  selCountry?.addEventListener('change', applyFilters);
+  selJob?.addEventListener('change', applyFilters);
+
+  btnClear?.addEventListener('click', () => {
+    if (inputName) inputName.value = '';
+    if (selCountry) selCountry.value = '';
+    if (selJob) selJob.value = '';
+    applyFilters();
+  });
+
+  // Navbar burger (móvil)
+  const burger = document.querySelector('.navbar-burger');
+  const menu = document.querySelector('#navMenu');
+  if (burger && menu) {
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('is-active');
+      menu.classList.toggle('is-active');
+    });
+  }
+}
+
 // 3) Carga inicial
 document.addEventListener("DOMContentLoaded", () => {
   hide(statusBox);
   hide(loader);
+  setupFilterEvents(); 
   fetchAll();
 });
 
