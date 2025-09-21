@@ -182,5 +182,72 @@
     </footer>
   </div>
 </div>
+
+<!-- Modal: Editar Cliente -->
+<div id="edit-modal" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Editar Cliente</p>
+      <button id="edit-close" class="delete" aria-label="close"></button>
+    </header>
+
+    <section class="modal-card-body">
+      <form id="edit-form" class="form">
+
+        <!-- Ocultando ID-->
+        <input type="hidden" name="id" id="edit-id">
+
+        <div class="field">
+          <label class="label">Nombre *</label>
+          <div class="control">
+            <input class="input" type="text" name="name" id="edit-name" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Puesto (Job title)</label>
+          <div class="control">
+            <input class="input" type="text" name="Job_title" id="edit-job">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">País</label>
+          <div class="control">
+            <input class="input" type="text" name="Country" id="edit-country">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Email</label>
+          <div class="control">
+            <input class="input" type="email" name="Email_address" id="edit-email">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Teléfono</label>
+          <div class="control">
+            <input class="input" type="text" name="Phone_number" id="edit-phone">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Avatar (URL)</label>
+          <div class="control">
+            <input class="input" type="url" name="avatar" id="edit-avatar">
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <footer class="modal-card-foot is-justify-content-flex-end">
+      <button id="btn-edit-cancel" class="button">Cancelar</button>
+      <button id="btn-edit-save" class="button is-warning">Guardar cambios</button>
+    </footer>
+  </div>
+</div>
 </body>
 </html>
