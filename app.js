@@ -9,11 +9,12 @@ const statusBox = $("#status");
 const show = (el) => el && el.classList.remove("is-hidden");
 const hide = (el) => el && el.classList.add("is-hidden");
 
+// Estado para filtros
 let allClients = [];
 
 // 2) Tarjetas
 function renderCards(clients) {
-  grid.innerHTML = ""; // Limpiamos el contenedor
+  grid.innerHTML = "";
 
   clients.forEach((client) => {
     const column = document.createElement("div");
@@ -44,13 +45,16 @@ function renderCards(clients) {
             ${country ? `<span class="tag is-info is-light">${country}</span>` : ""}
           </div>
 
-          <!-- Botones (CRUD: aún deshabilitados) -->
+          <!-- Botones -->
           <div class="buttons are-small">
+            <!-- Editar: aún deshabilitado -->
             <button class="button is-warning is-light" disabled title="Próximamente">
               <span class="icon"><i class="fas fa-pen"></i></span>
               <span>Editar</span>
             </button>
-            <button class="button is-danger is-light" disabled title="Próximamente">
+
+            <!-- Eliminar: habilitado (paso A) -->
+            <button class="button is-danger is-light btn-delete" data-id="${client.id}">
               <span class="icon"><i class="fas fa-trash"></i></span>
               <span>Eliminar</span>
             </button>
@@ -63,6 +67,7 @@ function renderCards(clients) {
   });
 }
 
+// Opciones dinámicas de filtros
 function fillFilterOptions(clients) {
   const countrySel = document.querySelector('#filter-country');
   const jobSel = document.querySelector('#filter-job');
@@ -77,7 +82,7 @@ function fillFilterOptions(clients) {
     jobs.map(j => `<option value="${j}">${j}</option>`).join('');
 }
 
-
+// Aplicar filtros (nombre, país, puesto)
 function applyFilters() {
   const q = (document.querySelector('#search-name')?.value || '').trim().toLowerCase();
   const country = document.querySelector('#filter-country')?.value || '';
@@ -85,15 +90,9 @@ function applyFilters() {
 
   let filtered = allClients;
 
-  if (q) {
-    filtered = filtered.filter(c => (c.name || '').toLowerCase().includes(q));
-  }
-  if (country) {
-    filtered = filtered.filter(c => c.Country === country);
-  }
-  if (job) {
-    filtered = filtered.filter(c => c.Job_title === job);
-  }
+  if (q) filtered = filtered.filter(c => (c.name || '').toLowerCase().includes(q));
+  if (country) filtered = filtered.filter(c => c.Country === country);
+  if (job) filtered = filtered.filter(c => c.Job_title === job);
 
   if (filtered.length === 0) {
     statusBox.className = "notification is-warning";
@@ -106,7 +105,7 @@ function applyFilters() {
   renderCards(filtered);
 }
 
-// barra de filtros y el navbar burger
+// Eventos de filtros + burger
 function setupFilterEvents() {
   const inputName = document.querySelector('#search-name');
   const selCountry = document.querySelector('#filter-country');
@@ -139,7 +138,7 @@ function setupFilterEvents() {
 document.addEventListener("DOMContentLoaded", () => {
   hide(statusBox);
   hide(loader);
-  setupFilterEvents(); 
+  setupFilterEvents();
   fetchAll();
 });
 
@@ -156,9 +155,9 @@ async function fetchAll() {
     const data = await res.json();
     console.log("🟢 Datos recibidos:", data);
 
-    allClients = data;           
-    fillFilterOptions(data);     
-    renderCards(data);
+    allClients = data;           // Guardando datos
+    fillFilterOptions(data);     // Llenar selects
+    renderCards(data);           // Pintar tarjetas
 
     if (!Array.isArray(data) || data.length === 0) {
       statusBox.className = "notification is-warning";

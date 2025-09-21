@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador con MockAPI TP javascript</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscador con MockAPI TP javascript</title>
+
+  <!-- Bulma (estable, reciente) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+  <!-- Font Awesome (para íconos) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
 </head>
 <body>
-     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+  <!-- Navbar -->
+  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="#">
-        <strong>Módulo Javascript</strong>
-      </a>
+      <a class="navbar-item" href="#"><strong>Módulo Javascript</strong></a>
       <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </a>
     </div>
 
@@ -35,65 +35,59 @@
       </div>
     </div>
   </nav>
-    <section class="section">
-  <div class="container">
-    <h1 class="title">Gestion de Clientes</h1>
 
-  <!-- Barra de filtros -->
-<div class="box mt-4">
-  <div class="field is-grouped is-grouped-multiline">
-    <!-- Buscar por nombre -->
-    <div class="control">
-      <input
-        id="search-name"
-        class="input"
-        type="text"
-        placeholder="Buscar por nombre"
-      />
-    </div>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Gestión de Clientes</h1>
 
-    <!-- Filtro por País -->
-    <div class="control">
-      <div class="select">
-        <select id="filter-country">
-          <option value="">Todos los países</option>
-          <!-- Opciones dinámicas desde JS -->
-        </select>
+      <!-- Barra de filtros -->
+      <div class="box mt-4">
+        <div class="field is-grouped is-grouped-multiline">
+          <!-- Buscar por nombre -->
+          <div class="control">
+            <input id="search-name" class="input" type="text" placeholder="Buscar por nombre" />
+          </div>
+
+          <!-- Filtro por País -->
+          <div class="control">
+            <div class="select">
+              <select id="filter-country">
+                <option value="">Todos los países</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Filtro por Puesto -->
+          <div class="control">
+            <div class="select">
+              <select id="filter-job">
+                <option value="">Todos los puestos</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Botón Limpiar -->
+          <div class="control">
+            <button id="btn-clear" class="button is-light">
+              <span class="icon"><i class="fas fa-eraser"></i></span>
+              <span>Limpiar filtros</span>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Filtro por Puesto (Job title) -->
-    <div class="control">
-      <div class="select">
-        <select id="filter-job">
-          <option value="">Todos los puestos</option>
-          <!-- Opciones dinámicas desde JS -->
-        </select>
+      <!-- Estados -->
+      <div id="status" class="notification is-hidden"></div>
+
+      <div id="loader" class="has-text-centered is-hidden">
+        <button class="button is-white is-loading">Cargando…</button>
       </div>
+
+      <!-- Grid -->
+      <div id="grid" class="columns is-multiline"></div>
     </div>
+  </section>
 
-    <!-- Botón Limpiar -->
-    <div class="control">
-      <button id="btn-clear" class="button is-light">
-        <span class="icon"><i class="fas fa-eraser"></i></span>
-        <span>Limpiar filtros</span>
-      </button>
-    </div>
-  </div>
-</div>  
-
-    <div id="status" class="notification is-hidden"></div>
-
-    <div id="loader" class="has-text-centered is-hidden">
-      <button class="button is-white is-loading">Cargando…</button>
-    </div>
-
-    <div id="grid" class="columns is-multiline"></div>
-   </div>
-   
-   </section>
-
- <script src="app.js" defer></script>
-    
+  <script src="app.js" defer></script>
 </body>
 </html>
