@@ -12,6 +12,13 @@ const hide = (el) => el && el.classList.add("is-hidden");
 // Estado para filtros
 let allClients = [];
 
+function flashStatus(type = "is-info", text = "", ms = 2200) {
+  statusBox.className = `notification ${type}`;
+  statusBox.textContent = text;
+  show(statusBox);
+  setTimeout(() => hide(statusBox), ms);
+}
+
 // 2) Tarjetas
 function renderCards(clients) {
   grid.innerHTML = "";
@@ -53,7 +60,7 @@ function renderCards(clients) {
               <span>Editar</span>
             </button>
 
-            <!-- Eliminar: habilitado (paso A) -->
+            <!-- Eliminar (habilitado) -->
             <button class="button is-danger is-light btn-delete" data-id="${client.id}">
               <span class="icon"><i class="fas fa-trash"></i></span>
               <span>Eliminar</span>
@@ -73,7 +80,7 @@ function fillFilterOptions(clients) {
   const jobSel = document.querySelector('#filter-job');
 
   const countries = [...new Set(clients.map(c => c.Country).filter(Boolean))].sort();
-  const jobs = [...new Set(clients.map(c => c.Job_title).filter(Boolean))].sort();
+  const jobs =   [...new Set(clients.map(c => c.Job_title).filter(Boolean))].sort();
 
   countrySel.innerHTML = `<option value="">Todos los países</option>` +
     countries.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -103,6 +110,49 @@ function applyFilters() {
   }
 
   renderCards(filtered);
+}
+
+// Eliminar con confirm que incluye el nombre
+async function deleteClient(id, btnRef) {
+  const client = allClients.find(c => String(c.id) === String(id));
+  const msg = client?.name
+    ? `¿Seguro que quieres eliminar a ${client.name}?`
+    : "¿Seguro que quieres eliminar este perfil?";
+  const ok = confirm(msg);
+  if (!ok) return;
+
+  // feedback en el botón
+  btnRef?.classList.add("is-loading");
+  btnRef?.setAttribute("disabled", "true");
+
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    // Actualizando estado local
+    allClients = allClients.filter(c => String(c.id) !== String(id));
+
+    applyFilters(); // re-render con filtros actuales
+
+    flashStatus("is-success", "Perfil eliminado correctamente.");
+  } catch (err) {
+    console.error("Error al eliminar:", err);
+    flashStatus("is-danger", "No se pudo eliminar el perfil.");
+    // reactivar botón si hubo error
+    btnRef?.classList.remove("is-loading");
+    btnRef?.removeAttribute("disabled");
+  }
+}
+
+// Clicks en el grid
+function attachGridEvents() {
+  grid.addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".btn-delete");
+    if (!btn) return;
+    const id = btn.dataset.id;
+    if (!id) return;
+    deleteClient(id, btn);
+  });
 }
 
 // Eventos de filtros + burger
@@ -139,6 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
   hide(statusBox);
   hide(loader);
   setupFilterEvents();
+  attachGridEvents();
   fetchAll();
 });
 
@@ -155,9 +206,9 @@ async function fetchAll() {
     const data = await res.json();
     console.log("🟢 Datos recibidos:", data);
 
-    allClients = data;           // Guardando datos
-    fillFilterOptions(data);     // Llenar selects
-    renderCards(data);           // Pintar tarjetas
+    allClients = data;
+    fillFilterOptions(data);
+    renderCards(data);
 
     if (!Array.isArray(data) || data.length === 0) {
       statusBox.className = "notification is-warning";
