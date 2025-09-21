@@ -118,5 +118,69 @@
     </footer>
   </div>
 </div>
+
+<!-- Modal: Crear Cliente -->
+<div id="create-modal" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Agregar Cliente</p>
+      <button id="create-close" class="delete" aria-label="close"></button>
+    </header>
+
+    <section class="modal-card-body">
+      <form id="create-form" class="form">
+        <div class="field">
+          <label class="label">Nombre *</label>
+          <div class="control">
+            <input class="input" type="text" name="name" placeholder="Nombre y apellido" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Puesto (Job title)</label>
+          <div class="control">
+            <input class="input" type="text" name="Job_title" placeholder="Ej: Frontend Developer">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">País</label>
+          <div class="control">
+            <input class="input" type="text" name="Country" placeholder="Ej: Argentina">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Email</label>
+          <div class="control">
+            <input class="input" type="email" name="Email_address" placeholder="nombre@correo.com">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Teléfono</label>
+          <div class="control">
+            <input class="input" type="text" name="Phone_number" placeholder="+54 9 11 2345-6789">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Avatar (URL)</label>
+          <div class="control">
+            <input class="input" type="url" name="avatar" placeholder="https://…">
+          </div>
+          <p class="help">Si lo dejas vacío, pondremos uno por defecto.</p>
+        </div>
+      </form>
+    </section>
+
+    <footer class="modal-card-foot is-justify-content-flex-end">
+      <button id="btn-create-cancel" class="button">Cancelar</button>
+      <button id="btn-create-save" class="button is-link">Guardar</button>
+    </footer>
+  </div>
+</div>
 </body>
 </html>

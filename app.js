@@ -54,6 +54,95 @@ function openConfirmModal(personName = "este perfil") {
   });
 }
 
+// --- Crear Cliente (modal + POST) ---
+
+function openCreateModal() {
+  const modal = document.querySelector("#create-modal");
+  modal.classList.add("is-active");
+
+  const close = () => modal.classList.remove("is-active");
+
+  const btnClose = document.querySelector("#create-close");
+  const btnCancel = document.querySelector("#btn-create-cancel");
+  const bg = modal.querySelector(".modal-background");
+
+  const onClose = () => {
+    btnClose.removeEventListener("click", onClose);
+    btnCancel.removeEventListener("click", onClose);
+    bg.removeEventListener("click", onClose);
+    modal.classList.remove("is-active");
+  };
+
+  btnClose.addEventListener("click", onClose);
+  btnCancel.addEventListener("click", onClose);
+  bg.addEventListener("click", onClose);
+}
+
+async function postClient(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function readCreateForm() {
+  const form = document.querySelector("#create-form");
+  const fd = new FormData(form);
+  // Normalizamos campos mínimos del esquema que ya usas
+  const name = (fd.get("name") || "").toString().trim();
+  if (!name) throw new Error("El nombre es obligatorio");
+
+  return {
+    name,
+    Job_title: (fd.get("Job_title") || "").toString().trim(),
+    Country: (fd.get("Country") || "").toString().trim(),
+    Email_address: (fd.get("Email_address") || "").toString().trim(),
+    Phone_number: (fd.get("Phone_number") || "").toString().trim(),
+    avatar: (fd.get("avatar") || "").toString().trim(),
+  };
+}
+
+function hookCreateModalEvents() {
+  // Abrir modal desde el botón del navbar
+  const btnAdd = document.querySelector("#btn-add");
+  btnAdd?.addEventListener("click", openCreateModal);
+
+  // Guardar
+  const btnSave = document.querySelector("#btn-create-save");
+  btnSave?.addEventListener("click", async () => {
+    try {
+      btnSave.classList.add("is-loading");
+      const payload = readCreateForm();
+
+      // avatar por defecto si está vacío
+      if (!payload.avatar) {
+        payload.avatar = `https://i.pravatar.cc/128?u=${Date.now()}`;
+      }
+
+      const created = await postClient(payload);
+
+      // Actualizar estado local y UI
+      allClients = [created, ...allClients];
+      fillFilterOptions(allClients);  // puede incorporar nuevos países/puestos
+      applyFilters();                 // respeta filtros actuales al re-renderizar
+
+      // Cerrar modal y feedback
+      document.querySelector("#create-modal").classList.remove("is-active");
+      document.querySelector("#create-form").reset();
+      flashStatus("is-success", "Cliente creado correctamente.");
+    } catch (err) {
+      console.error(err);
+      flashStatus("is-danger", err.message || "No se pudo crear el cliente.");
+    } finally {
+      btnSave.classList.remove("is-loading");
+    }
+  });
+}
+
+
 // 2) Tarjetas
 function renderCards(clients) {
   grid.innerHTML = "";
@@ -213,6 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
   hide(loader);
   setupFilterEvents();
   attachGridEvents();
+  hookCreateModalEvents();  
   fetchAll();
 });
 
