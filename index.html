@@ -89,5 +89,34 @@
   </section>
 
   <script src="app.js" defer></script>
+
+  <!-- Modal de confirmación (Bulma) -->
+<div id="confirm-modal" class="modal" aria-modal="true" role="dialog">
+  <div class="modal-background"></div>
+
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Confirmar eliminación</p>
+      <button id="confirm-close" class="delete" aria-label="close"></button>
+    </header>
+
+    <section class="modal-card-body">
+      <div class="content has-text-centered">
+        <p class="mb-2">
+          ¿Estás seguro que deseas eliminar a <strong id="confirm-name">este perfil</strong>?
+        </p>
+        <p class="is-size-7 has-text-grey">Esta acción no se puede deshacer.</p>
+      </div>
+    </section>
+
+    <footer class="modal-card-foot is-justify-content-center">
+      <button id="btn-cancel-delete" class="button">Cancelar</button>
+      <button id="btn-confirm-delete" class="button is-danger">
+        <span class="icon"><i class="fas fa-trash"></i></span>
+        <span>Eliminar</span>
+      </button>
+    </footer>
+  </div>
+</div>
 </body>
 </html>

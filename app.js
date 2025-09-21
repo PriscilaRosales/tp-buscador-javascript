@@ -12,11 +12,46 @@ const hide = (el) => el && el.classList.add("is-hidden");
 // Estado para filtros
 let allClients = [];
 
+// Avisos rápidos
 function flashStatus(type = "is-info", text = "", ms = 2200) {
   statusBox.className = `notification ${type}`;
   statusBox.textContent = text;
   show(statusBox);
   setTimeout(() => hide(statusBox), ms);
+}
+
+// Modal de confirmación (Bulma)
+function openConfirmModal(personName = "este perfil") {
+  return new Promise((resolve) => {
+    const modal = document.querySelector("#confirm-modal");
+    const nameSpan = document.querySelector("#confirm-name");
+    const btnOk = document.querySelector("#btn-confirm-delete");
+    const btnCancel = document.querySelector("#btn-cancel-delete");
+    const btnClose = document.querySelector("#confirm-close");
+    const bg = modal.querySelector(".modal-background");
+
+    let settled = false;
+    const cleanup = () => {
+      modal.classList.remove("is-active");
+      btnOk.removeEventListener("click", onOk);
+      btnCancel.removeEventListener("click", onCancel);
+      btnClose.removeEventListener("click", onCancel);
+      bg.removeEventListener("click", onCancel);
+      document.removeEventListener("keydown", onEsc);
+    };
+    const onOk = () => { if (!settled) { settled = true; cleanup(); resolve(true); } };
+    const onCancel = () => { if (!settled) { settled = true; cleanup(); resolve(false); } };
+    const onEsc = (e) => { if (e.key === "Escape") onCancel(); };
+
+    nameSpan.textContent = personName || "este perfil";
+    modal.classList.add("is-active");
+
+    btnOk.addEventListener("click", onOk);
+    btnCancel.addEventListener("click", onCancel);
+    btnClose.addEventListener("click", onCancel);
+    bg.addEventListener("click", onCancel);
+    document.addEventListener("keydown", onEsc);
+  });
 }
 
 // 2) Tarjetas
@@ -34,33 +69,27 @@ function renderCards(clients) {
 
     column.innerHTML = `
       <div class="card">
-        <!-- Avatar -->
         <div class="card-image has-text-centered p-4">
           <figure class="image is-128x128 is-inline-block">
             <img class="is-rounded" src="${avatar}" alt="${name}">
           </figure>
         </div>
 
-        <!-- Contenido -->
         <div class="card-content">
           <p class="title is-5 mb-1">${name}</p>
           ${job ? `<p class="subtitle is-6">${job}</p>` : ""}
 
-          <!-- Tags -->
           <div class="tags mb-3">
             ${job ? `<span class="tag is-link is-light">${job}</span>` : ""}
             ${country ? `<span class="tag is-info is-light">${country}</span>` : ""}
           </div>
 
-          <!-- Botones -->
           <div class="buttons are-small">
-            <!-- Editar: aún deshabilitado -->
             <button class="button is-warning is-light" disabled title="Próximamente">
               <span class="icon"><i class="fas fa-pen"></i></span>
               <span>Editar</span>
             </button>
 
-            <!-- Eliminar (habilitado) -->
             <button class="button is-danger is-light btn-delete" data-id="${client.id}">
               <span class="icon"><i class="fas fa-trash"></i></span>
               <span>Eliminar</span>
@@ -112,13 +141,10 @@ function applyFilters() {
   renderCards(filtered);
 }
 
-// Eliminar con confirm que incluye el nombre
+// Eliminar con confirm (modal Bulma) que incluye el nombre
 async function deleteClient(id, btnRef) {
   const client = allClients.find(c => String(c.id) === String(id));
-  const msg = client?.name
-    ? `¿Seguro que quieres eliminar a ${client.name}?`
-    : "¿Seguro que quieres eliminar este perfil?";
-  const ok = confirm(msg);
+  const ok = await openConfirmModal(client?.name);
   if (!ok) return;
 
   // feedback en el botón
@@ -129,22 +155,19 @@ async function deleteClient(id, btnRef) {
     const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    // Actualizando estado local
     allClients = allClients.filter(c => String(c.id) !== String(id));
-
-    applyFilters(); // re-render con filtros actuales
+    applyFilters(); // re-render con los filtros actuales
 
     flashStatus("is-success", "Perfil eliminado correctamente.");
   } catch (err) {
     console.error("Error al eliminar:", err);
     flashStatus("is-danger", "No se pudo eliminar el perfil.");
-    // reactivar botón si hubo error
     btnRef?.classList.remove("is-loading");
     btnRef?.removeAttribute("disabled");
   }
 }
 
-// Clicks en el grid
+// Delegación de clicks en el grid
 function attachGridEvents() {
   grid.addEventListener("click", (ev) => {
     const btn = ev.target.closest(".btn-delete");
