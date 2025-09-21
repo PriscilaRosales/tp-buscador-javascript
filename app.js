@@ -142,6 +142,87 @@ function hookCreateModalEvents() {
   });
 }
 
+// --- Editar Cliente (modal + PUT) ---
+function openEditModal() {
+  const modal = document.querySelector("#edit-modal");
+  modal.classList.add("is-active");
+
+  const btnClose = document.querySelector("#edit-close");
+  const btnCancel = document.querySelector("#btn-edit-cancel");
+  const bg = modal.querySelector(".modal-background");
+
+  const onClose = () => {
+    btnClose.removeEventListener("click", onClose);
+    btnCancel.removeEventListener("click", onClose);
+    bg.removeEventListener("click", onClose);
+    modal.classList.remove("is-active");
+  };
+
+  btnClose.addEventListener("click", onClose);
+  btnCancel.addEventListener("click", onClose);
+  bg.addEventListener("click", onClose);
+}
+
+function fillEditForm(client) {
+  document.querySelector("#edit-id").value = client.id || "";
+  document.querySelector("#edit-name").value = client.name || "";
+  document.querySelector("#edit-job").value = client.Job_title || "";
+  document.querySelector("#edit-country").value = client.Country || "";
+  document.querySelector("#edit-email").value = client.Email_address || "";
+  document.querySelector("#edit-phone").value = client.Phone_number || "";
+  document.querySelector("#edit-avatar").value = client.avatar || "";
+}
+
+function readEditForm() {
+  const fd = new FormData(document.querySelector("#edit-form"));
+  const name = (fd.get("name") || "").toString().trim();
+  if (!name) throw new Error("El nombre es obligatorio");
+
+  return {
+    id: (fd.get("id") || "").toString(),
+    name,
+    Job_title: (fd.get("Job_title") || "").toString().trim(),
+    Country: (fd.get("Country") || "").toString().trim(),
+    Email_address: (fd.get("Email_address") || "").toString().trim(),
+    Phone_number: (fd.get("Phone_number") || "").toString().trim(),
+    avatar: (fd.get("avatar") || "").toString().trim(),
+  };
+}
+
+async function putClient(id, payload) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function hookEditEvents() {
+  const btnSave = document.querySelector("#btn-edit-save");
+  btnSave?.addEventListener("click", async () => {
+    try {
+      btnSave.classList.add("is-loading");
+      const payload = readEditForm();
+      const updated = await putClient(payload.id, payload);
+
+      // actualizamos el estado local
+      allClients = allClients.map(c => (String(c.id) === String(updated.id) ? updated : c));
+
+      applyFilters(); // respeta filtros actuales
+      document.querySelector("#edit-modal").classList.remove("is-active");
+      flashStatus("is-success", "Cliente actualizado correctamente.");
+    } catch (err) {
+      console.error(err);
+      flashStatus("is-danger", err.message || "No se pudo actualizar el cliente.");
+    } finally {
+      btnSave.classList.remove("is-loading");
+    }
+  });
+}
+
+
 
 // 2) Tarjetas
 function renderCards(clients) {
@@ -174,10 +255,11 @@ function renderCards(clients) {
           </div>
 
           <div class="buttons are-small">
-            <button class="button is-warning is-light" disabled title="Próximamente">
-              <span class="icon"><i class="fas fa-pen"></i></span>
-              <span>Editar</span>
+            <button class="button is-warning is-light btn-edit" data-id="${client.id}">
+             <span class="icon"><i class="fas fa-pen"></i></span>
+             <span>Editar</span>
             </button>
+
 
             <button class="button is-danger is-light btn-delete" data-id="${client.id}">
               <span class="icon"><i class="fas fa-trash"></i></span>
