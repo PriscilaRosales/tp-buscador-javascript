@@ -6,11 +6,19 @@ Permite consultar, filtrar y visualizar información de clientes obtenida desde 
 ---
 ## 🚀 Estado del proyecto
 
-✅ Conexión con MockAPI y primer `fetch` implementado  
-✅ Renderizado de tarjetas básicas con datos reales  
+✅ Conexión con MockAPI y fetch de datos funcionando  
+✅ Renderizado de tarjetas con avatar, nombre, puesto y país  
 ✅ Barra de navegación añadida  
 ✅ Filtros dinámicos (país y puesto) generados desde los datos  
-🔄 Próximo paso: conectar los filtros con eventos y limpiar resultados
+✅ Búsqueda por nombre y botón de limpiar filtros  
+✅ CRUD completo: agregar, editar y eliminar clientes con modales  
+✅ Confirmación de eliminación con modal Bulma  
+✅ Loader/spinner durante operaciones de carga  
+✅ Notificaciones de estado (éxito/error) con Bulma  
+✅ Responsive con Bulma (sin CSS adicional)  
+✅ README con instrucciones y capturas añadidas  
+✅ Proyecto listo para entrega final
+
 
 ---
 ## 🖼️ Capturas de pantalla
