@@ -204,13 +204,20 @@ function hookEditEvents() {
   btnSave?.addEventListener("click", async () => {
     try {
       btnSave.classList.add("is-loading");
+      btnSave.setAttribute("disabled", "true");
+
       const payload = readEditForm();
       const updated = await putClient(payload.id, payload);
 
       // actualizamos el estado local
-      allClients = allClients.map(c => (String(c.id) === String(updated.id) ? updated : c));
+      allClients = allClients.map(c =>
+        String(c.id) === String(updated.id) ? updated : c
+      );
 
-      applyFilters(); // respeta filtros actuales
+      // refrescamos selects (por si cambió País o Puesto) y re-renderizamos
+      fillFilterOptions(allClients);
+      applyFilters();
+
       document.querySelector("#edit-modal").classList.remove("is-active");
       flashStatus("is-success", "Cliente actualizado correctamente.");
     } catch (err) {
@@ -218,8 +225,11 @@ function hookEditEvents() {
       flashStatus("is-danger", err.message || "No se pudo actualizar el cliente.");
     } finally {
       btnSave.classList.remove("is-loading");
+      btnSave.removeAttribute("disabled");
     }
   });
+}
+
 }
 
 
@@ -312,7 +322,7 @@ function applyFilters() {
   renderCards(filtered);
 }
 
-// Eliminar con confirm (modal Bulma) que incluye el nombre
+// Eliminar con confirm 
 async function deleteClient(id, btnRef) {
   const client = allClients.find(c => String(c.id) === String(id));
   const ok = await openConfirmModal(client?.name);
@@ -341,13 +351,30 @@ async function deleteClient(id, btnRef) {
 // Delegación de clicks en el grid
 function attachGridEvents() {
   grid.addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".btn-delete");
-    if (!btn) return;
-    const id = btn.dataset.id;
-    if (!id) return;
-    deleteClient(id, btn);
+    // — Eliminar —
+    const del = ev.target.closest(".btn-delete");
+    if (del) {
+      const id = del.dataset.id;
+      if (id) deleteClient(id, del);
+      return;
+    }
+
+    // — Editar —
+    const edit = ev.target.closest(".btn-edit");
+    if (edit) {
+      const id = edit.dataset.id;
+      if (!id) return;
+
+      const client = allClients.find(c => String(c.id) === String(id));
+      if (!client) return;
+
+      fillEditForm(client);   // form con datos actuales
+      openEditModal();        // abre el modal de edición
+      return;
+    }
   });
 }
+
 
 // Eventos de filtros + burger
 function setupFilterEvents() {
@@ -385,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFilterEvents();
   attachGridEvents();
   hookCreateModalEvents();  
+  hookEditEvents();         
   fetchAll();
 });
 
