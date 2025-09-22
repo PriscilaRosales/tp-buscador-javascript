@@ -230,8 +230,6 @@ function hookEditEvents() {
   });
 }
 
-}
-
 
 
 // 2) Tarjetas
