@@ -16,6 +16,7 @@ Permite consultar, filtrar y visualizar información de clientes obtenida desde 
 ## 🖼️ Capturas de pantalla
 ![Vista principal](assets/Screenshots/screenshot1.png)  
 ![Vista principal 1](assets/Screenshots/screenshot2.png)
+![Vista filtro ](assets/Screenshots/screenshot3.png)
 
 ---
 
@@ -33,6 +34,12 @@ Permite consultar, filtrar y visualizar información de clientes obtenida desde 
 - [Bulma](https://bulma.io/) – Framework CSS  
 - [Font Awesome](https://fontawesome.com/) – Íconos  
 - JavaScript (ES6+)
+
+## 🛠️ Instalación y configuración
+
+### Requisitos
+- Navegador moderno (Chrome, Firefox, Edge o Safari).
+- **No** requiere Node ni build. Es una SPA estática con Bulma.
 
 ---
 
